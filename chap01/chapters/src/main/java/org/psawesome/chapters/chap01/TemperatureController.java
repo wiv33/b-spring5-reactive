@@ -1,5 +1,6 @@
-package org.psawesome.chapters;
+package org.psawesome.chapters.chap01;
 
+import org.psawesome.chapters.Temperature;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
