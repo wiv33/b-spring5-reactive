@@ -59,16 +59,3 @@ project(":chapters") {
         testImplementation("io.projectreactor:reactor-test")
     }
 }
-/*
-dependencies {
-// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
-    testCompile group : 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
-
-    testImplementation 'io.projectreactor:reactor-test'
-
-}
-
-test {
-    useJUnitPlatform()
-}
-*/
