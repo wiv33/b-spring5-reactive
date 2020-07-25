@@ -26,6 +26,7 @@ public class GroupByTest {
     Flux.range(1, 7)
             .groupBy(e -> e % 2 == 0 ? "even" : "odd")
             .subscribe(groupFlux -> groupFlux
+                    // .reduce(new LinkedList<>(),
                     .scan(new LinkedList<>(),
                             (list, ele) -> {
                               list.add(ele);
@@ -34,6 +35,7 @@ public class GroupByTest {
                               }
                               return list;
                             })
+//                    .log()
                     .filter(arr -> !arr.isEmpty())
                     .subscribe(data -> log.info("{}: {}", groupFlux.key(), data)));
     /*
