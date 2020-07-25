@@ -196,34 +196,8 @@ class MainFluxTest {
       }
     };
   }
+
   // tag::extendsMySubscriberBaseSubscriber[]
-
-
-  @Test
-  void testThenMany() {
-    // 상위 스트림이 완료될 때
-    Flux.just(1, 2, 3)
-            .log("just log")
-            .thenMany(Flux.just(4, 5))
-            .log("thenMany log")
-            .subscribe(s -> log.info("onNext: {}", s));
-    /*
-17:25:55.823 [Test worker] INFO thenMany log - onSubscribe(FluxConcatArray.ConcatArraySubscriber)
-17:25:55.825 [Test worker] INFO thenMany log - request(unbounded)
-17:25:55.827 [Test worker] INFO just log - | onSubscribe([Synchronous Fuseable] FluxArray.ArraySubscription)
-17:25:55.827 [Test worker] INFO just log - | request(unbounded)
-17:25:55.828 [Test worker] INFO just log - | onNext(1)
-17:25:55.828 [Test worker] INFO just log - | onNext(2)
-17:25:55.828 [Test worker] INFO just log - | onNext(3)
-17:25:55.828 [Test worker] INFO just log - | onComplete()
-17:25:55.829 [Test worker] INFO thenMany log - onNext(4)
-17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 4
-17:25:55.829 [Test worker] INFO thenMany log - onNext(5)
-17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 5
-17:25:55.829 [Test worker] INFO thenMany log - onComplete()
-     */
-  }
-
   @Test
   void testExtendsMySubscriber() {
     MySubscriber<Integer> mySubscriber = new MySubscriber<>();
@@ -277,6 +251,52 @@ class MainFluxTest {
     }
   }
   // end::extendsMySubscriberBaseSubscriber[]
+
+  @Test
+  void testThenMany() {
+    // 상위 스트림이 완료될 때
+    Flux.just(1, 2, 3)
+            .log("just log")
+            .thenMany(Flux.just(4, 5))
+            .log("thenMany log")
+            .subscribe(s -> log.info("onNext: {}", s));
+    /*
+17:25:55.823 [Test worker] INFO thenMany log - onSubscribe(FluxConcatArray.ConcatArraySubscriber)
+17:25:55.825 [Test worker] INFO thenMany log - request(unbounded)
+17:25:55.827 [Test worker] INFO just log - | onSubscribe([Synchronous Fuseable] FluxArray.ArraySubscription)
+17:25:55.827 [Test worker] INFO just log - | request(unbounded)
+17:25:55.828 [Test worker] INFO just log - | onNext(1)
+17:25:55.828 [Test worker] INFO just log - | onNext(2)
+17:25:55.828 [Test worker] INFO just log - | onNext(3)
+17:25:55.828 [Test worker] INFO just log - | onComplete()
+17:25:55.829 [Test worker] INFO thenMany log - onNext(4)
+17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 4
+17:25:55.829 [Test worker] INFO thenMany log - onNext(5)
+17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 5
+17:25:55.829 [Test worker] INFO thenMany log - onComplete()
+     */
+  }
+
+  @Test
+  void testConcat() {
+    Flux.concat(
+            Flux.range(1, 3),
+            Flux.range(4, 2),
+            Flux.range(6, 5)
+    ).subscribe(n -> log.info("onNext : {}", n));
+    /*
+17:36:11.902 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 1
+17:36:11.903 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 2
+17:36:11.903 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 3
+17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 4
+17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 5
+17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 6
+17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 7
+17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 8
+17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 9
+17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 10
+     */
+  }
 
   void error(Throwable throwable) {
     log.error("Throwable is : {}", throwable.getMessage());
