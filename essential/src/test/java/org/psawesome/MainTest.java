@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
@@ -51,9 +53,12 @@ public class MainTest {
   @Test
   @DisplayName("scan을 이용하여 스트림의 평균 이동을 계산할 수 있다.")
   void testFluxScan() {
+    log.info("MainTest.testFluxScan");
+    Hooks.onOperatorDebug();
     int bucketSize = 5; // 다섯 가지의 이벤트 == 관심있는 이벤트
     Flux.range(1, 500)
             .index() // 각 원소에 인덱스를 부여한다.
+            .checkpoint("i want point trace", false)
             .log()
 //            .filter(n -> n.getT1() % 3 == 0)
             .scan(
@@ -63,12 +68,24 @@ public class MainTest {
                       return acc;
                     })
             .log()
-    .skip(bucketSize)
+            .skip(bucketSize)
             .log()
-    .map(arr -> Arrays.stream(arr).sum() * 1.0 / bucketSize)
-    .subscribe(average -> log.info("Running average : {}", average),
-            throwable -> log.error(throwable.getMessage()),
-            () -> log.info("onComplete"),
-            subscription -> subscription.request(Long.MAX_VALUE));
+            .map(arr -> Arrays.stream(arr).sum() * 1.0 / bucketSize)
+            .subscribe(average -> log.info("Running average : {}", average),
+                    throwable -> log.error(throwable.getMessage()),
+                    () -> log.info("onComplete"),
+                    subscription -> subscription.request(Long.MAX_VALUE));
+  }
+
+  @Test
+  void testFluxAny() {
+    log.info("MainTest.testFluxAny");
+    Flux.generate(sink -> sink.next(ThreadLocalRandom.current().nextInt()))
+            .cast(Integer.class)
+            .any(n -> n % 2 == 0)
+            .subscribe(event -> log.info("Has event :{}", event),
+                    throwable -> log.error(throwable.getMessage()) ,
+                    () -> log.info("testFluxAny Complete"),
+                    subscription -> subscription.request(7));
   }
 }
