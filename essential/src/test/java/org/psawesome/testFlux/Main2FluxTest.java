@@ -1,4 +1,4 @@
-package org.psawesome;
+package org.psawesome.testFlux;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

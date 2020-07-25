@@ -1,4 +1,4 @@
 logging:
-  file: src/test/java/org/psawesome/test-log.log
+  file: src/test/java/org/psawesome/testFlux/test-log.log
   level:
     root: info

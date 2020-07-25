@@ -1,4 +1,4 @@
-package org.psawesome;
+package org.psawesome.testFlux;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -270,9 +270,9 @@ class MainFluxTest {
 17:25:55.828 [Test worker] INFO just log - | onNext(3)
 17:25:55.828 [Test worker] INFO just log - | onComplete()
 17:25:55.829 [Test worker] INFO thenMany log - onNext(4)
-17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 4
+17:25:55.829 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext: 4
 17:25:55.829 [Test worker] INFO thenMany log - onNext(5)
-17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 5
+17:25:55.829 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext: 5
 17:25:55.829 [Test worker] INFO thenMany log - onComplete()
      */
   }
@@ -285,16 +285,16 @@ class MainFluxTest {
             Flux.range(6, 5)
     ).subscribe(n -> log.info("onNext : {}", n));
     /*
-17:36:11.902 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 1
-17:36:11.903 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 2
-17:36:11.903 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 3
-17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 4
-17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 5
-17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 6
-17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 7
-17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 8
-17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 9
-17:36:11.904 [Test worker] INFO org.psawesome.MainFluxTest - onNext : 10
+17:36:11.902 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 1
+17:36:11.903 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 2
+17:36:11.903 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 3
+17:36:11.904 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 4
+17:36:11.904 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 5
+17:36:11.904 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 6
+17:36:11.904 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 7
+17:36:11.904 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 8
+17:36:11.904 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 9
+17:36:11.904 [Test worker] INFO org.psawesome.testFlux.MainFluxTest - onNext : 10
      */
   }
 
