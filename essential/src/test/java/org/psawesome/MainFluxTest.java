@@ -1,17 +1,22 @@
 package org.psawesome;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
@@ -28,6 +33,18 @@ import java.util.concurrent.ThreadLocalRandom;
 @ContextConfiguration(locations = "classpath:application.yml")
 class MainFluxTest {
   private final static Logger log = LoggerFactory.getLogger(MainFluxTest.class);
+
+
+  @Test
+  void testDispose() throws InterruptedException {
+    final Disposable disposable = Flux.interval(Duration.ofMillis(50))
+            .subscribe(interval -> log.info("onNext: {}", interval));
+    assertFalse(disposable.isDisposed());
+    Thread.sleep(2000);
+    disposable.dispose();
+
+    assertTrue(disposable.isDisposed());
+  }
 
   @Test
   @DisplayName("Reduce와 Scan의 차이점")
@@ -121,6 +138,9 @@ class MainFluxTest {
                     e.getT2().getT2())
             );
   }
+
+
+
 
   void error(Throwable throwable) {
     log.error("Throwable is : {}", throwable.getMessage());
