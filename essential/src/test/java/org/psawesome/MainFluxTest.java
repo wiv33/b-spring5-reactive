@@ -21,7 +21,8 @@ import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
@@ -195,8 +196,34 @@ class MainFluxTest {
       }
     };
   }
-
   // tag::extendsMySubscriberBaseSubscriber[]
+
+
+  @Test
+  void testThenMany() {
+    // 상위 스트림이 완료될 때
+    Flux.just(1, 2, 3)
+            .log("just log")
+            .thenMany(Flux.just(4, 5))
+            .log("thenMany log")
+            .subscribe(s -> log.info("onNext: {}", s));
+    /*
+17:25:55.823 [Test worker] INFO thenMany log - onSubscribe(FluxConcatArray.ConcatArraySubscriber)
+17:25:55.825 [Test worker] INFO thenMany log - request(unbounded)
+17:25:55.827 [Test worker] INFO just log - | onSubscribe([Synchronous Fuseable] FluxArray.ArraySubscription)
+17:25:55.827 [Test worker] INFO just log - | request(unbounded)
+17:25:55.828 [Test worker] INFO just log - | onNext(1)
+17:25:55.828 [Test worker] INFO just log - | onNext(2)
+17:25:55.828 [Test worker] INFO just log - | onNext(3)
+17:25:55.828 [Test worker] INFO just log - | onComplete()
+17:25:55.829 [Test worker] INFO thenMany log - onNext(4)
+17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 4
+17:25:55.829 [Test worker] INFO thenMany log - onNext(5)
+17:25:55.829 [Test worker] INFO org.psawesome.MainFluxTest - onNext: 5
+17:25:55.829 [Test worker] INFO thenMany log - onComplete()
+     */
+  }
+
   @Test
   void testExtendsMySubscriber() {
     MySubscriber<Integer> mySubscriber = new MySubscriber<>();
@@ -209,6 +236,7 @@ class MainFluxTest {
 
   static class MySubscriber<T> extends BaseSubscriber<T> {
     static AtomicInteger atomicInteger = new AtomicInteger(0);
+
     @Override
     protected Subscription upstream() {
       log.info("My upstream ==== ");
