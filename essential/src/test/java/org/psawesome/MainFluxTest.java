@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.SignalType;
 
+import java.lang.management.ManagementFactory;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -195,6 +196,7 @@ class MainFluxTest {
     };
   }
 
+  // tag::extendsMySubscriberBaseSubscriber[]
   @Test
   void testExtendsMySubscriber() {
     MySubscriber<Integer> mySubscriber = new MySubscriber<>();
@@ -229,6 +231,8 @@ class MainFluxTest {
       log.info("onNext is {}", value);
       super.hookOnNext(value);
       if (atomicInteger.getAndIncrement() > 2) {
+        final String name = ManagementFactory.getRuntimeMXBean().getName();
+        log.info("app PID is [{}]", name.split("@")[0]);
         request(4);
         atomicInteger.set(0);
       }
@@ -244,6 +248,7 @@ class MainFluxTest {
       }
     }
   }
+  // end::extendsMySubscriberBaseSubscriber[]
 
   void error(Throwable throwable) {
     log.error("Throwable is : {}", throwable.getMessage());
