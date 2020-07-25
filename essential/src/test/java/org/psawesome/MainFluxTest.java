@@ -4,9 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.context.ContextConfiguration;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,11 +25,12 @@ import java.util.concurrent.ThreadLocalRandom;
  * @since 20. 7. 25. Saturday
  */
 @DisplayName("Flux Mono 출력으로 확인하는 테스트 코드 by subscribe ")
-public class MainFluxTest {
+@ContextConfiguration(locations = "classpath:application.yml")
+class MainFluxTest {
   private final static Logger log = LoggerFactory.getLogger(MainFluxTest.class);
 
   @Test
-  @DisplayName("")
+  @DisplayName("Reduce와 Scan의 차이점")
   void testFluxReduceAndScan() {
     Flux.range(1, 5)
             .reduce(0, Integer::sum)
@@ -100,6 +103,23 @@ public class MainFluxTest {
                     this::error,
                     this::onComplete,
                     subscription -> subscription.request(1));
+  }
+
+
+  @Test
+  @DisplayName("timestamp와 index의 기능 확인")
+  void timestampAndIndex() {
+    log.info("timestamp와 index의 기능 확인");
+    Flux.range(2018, 5)
+            .timestamp()
+            .log("timestamp ==> ")
+            .index()
+            .log()
+            .subscribe(e -> log.info("index: {}, ts: {}, value: {}",
+                    e.getT1(),
+                    Instant.ofEpochMilli(e.getT2().getT1()),
+                    e.getT2().getT2())
+            );
   }
 
   void error(Throwable throwable) {

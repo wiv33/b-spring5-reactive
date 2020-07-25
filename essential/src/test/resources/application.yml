@@ -1,0 +1,4 @@
+logging:
+  file: src/test/java/org/psawesome/test-log.log
+  level:
+    root: info
