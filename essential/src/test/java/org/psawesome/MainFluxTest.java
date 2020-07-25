@@ -1,20 +1,24 @@
 package org.psawesome;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import reactor.core.Disposable;
+import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
+import reactor.core.publisher.SignalType;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -139,8 +143,107 @@ class MainFluxTest {
             );
   }
 
+  @Test
+  void testImplSubscriber() throws InterruptedException {
 
+    Subscriber<Integer> subscriber = this.mySubscriber();
+    final Flux<Integer> cold = Flux.range(0, 33)
+            .log()
+            .repeat(7);
+    cold.subscribe(subscriber);
 
+    Thread.sleep(10000);
+  }
+
+  private Subscriber<Integer> mySubscriber() {
+    return new Subscriber<>() {
+      Subscription subscription;
+      AtomicInteger integer = new AtomicInteger(0);
+
+      @Override
+      public void onSubscribe(Subscription s) {
+        this.subscription = s;
+        log.info("onSubscriber ! this thread name is [{}]", Thread.currentThread().getName());
+        subscription.request(7);
+        // tag::onComplete and request test[]
+//        subscription.request(Long.MAX_VALUE);
+        // end::onComplete and request test[]
+
+      }
+
+      @Override
+      public void onNext(Integer aInteger) {
+        log.info("onNext is {}", aInteger);
+        if (integer.getAndIncrement() > 2) {
+          subscription.request(3);
+          integer.set(0);
+        }
+      }
+
+      @Override
+      public void onError(Throwable t) {
+        log.error(t.getMessage());
+      }
+
+      @Override
+      public void onComplete() {
+        log.info("onComplete and Request");
+        // tag::onComplete and request test[]
+//        subscription.request(3);
+        // end::onComplete and request test[]
+      }
+    };
+  }
+
+  @Test
+  void testExtendsMySubscriber() {
+    MySubscriber<Integer> mySubscriber = new MySubscriber<>();
+    final Flux<Integer> repeat = Flux.range(1, 33)
+            .log()
+            .repeat(7);
+
+    repeat.subscribe(mySubscriber);
+  }
+
+  static class MySubscriber<T> extends BaseSubscriber<T> {
+    static AtomicInteger atomicInteger = new AtomicInteger(0);
+    @Override
+    protected Subscription upstream() {
+      log.info("My upstream ==== ");
+      return super.upstream();
+    }
+
+    public MySubscriber() {
+      super();
+      log.info("MySubscriber constructor");
+    }
+
+    @Override
+    protected void hookOnSubscribe(Subscription sub) {
+      log.info("hook on subscribe request 7");
+      request(7);
+    }
+
+    @Override
+    protected void hookOnNext(T value) {
+      log.info("onNext is {}", value);
+      super.hookOnNext(value);
+      if (atomicInteger.getAndIncrement() > 2) {
+        request(4);
+        atomicInteger.set(0);
+      }
+    }
+
+    @Override
+    protected void hookFinally(SignalType type) {
+      log.info("hookFinally === ");
+      super.hookFinally(type);
+      if (super.isDisposed()) {
+        log.info("finally dispose");
+        super.dispose();
+      }
+    }
+  }
 
   void error(Throwable throwable) {
     log.error("Throwable is : {}", throwable.getMessage());
