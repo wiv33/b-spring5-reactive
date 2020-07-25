@@ -1512,3 +1512,5 @@
 14:23:28.214 MainTest.testFluxAny
 14:23:28.285 Has event :true
 14:23:28.286 testFluxAny Complete
+14:32:02.616 onComplete
+14:32:23.487 onComplete

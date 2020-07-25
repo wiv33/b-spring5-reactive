@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -22,8 +23,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @since 20. 7. 25. Saturday
  */
 @DisplayName("Flux Mono 출력으로 확인하는 테스트 코드 by subscribe ")
-public class MainTest {
-  private final static Logger log = LoggerFactory.getLogger(MainTest.class);
+public class MainFluxTest {
+  private final static Logger log = LoggerFactory.getLogger(MainFluxTest.class);
 
   @Test
   @DisplayName("")
@@ -84,8 +85,28 @@ public class MainTest {
             .cast(Integer.class)
             .any(n -> n % 2 == 0)
             .subscribe(event -> log.info("Has event :{}", event),
-                    throwable -> log.error(throwable.getMessage()) ,
+                    throwable -> log.error(throwable.getMessage()),
                     () -> log.info("testFluxAny Complete"),
                     subscription -> subscription.request(7));
+  }
+
+  @Test
+  @DisplayName("리스트의 모든 원소를 수집하고 정렬")
+  void testCollectSortedList() {
+    Flux.just(1, 6, 8, 9, 2, 5, 6, 1, 7, 15, 6, 3, 72)
+            .log()
+            .collectSortedList(Comparator.reverseOrder())
+            .subscribe(System.out::println,
+                    this::error,
+                    this::onComplete,
+                    subscription -> subscription.request(1));
+  }
+
+  void error(Throwable throwable) {
+    log.error("Throwable is : {}", throwable.getMessage());
+  }
+
+  void onComplete() {
+    log.info("onComplete");
   }
 }
