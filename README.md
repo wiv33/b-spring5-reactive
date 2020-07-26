@@ -21,7 +21,9 @@ b-spring5-reactive
     ```java
     @Test
     void testIndex() {
-        final Flux<Tuple2<Long, String>> index = getJust().index();
+        final Flux<Tuple2<Long, String>> index = 
+                                  Flux.just("a", "b", "c", "d", "e", "f", "g")
+                                      .index();
         index.subscribe(consumer ->
                          log.info("T1 = [{}], T2 = [{}]", 
                                   consumer.getT1(), 
