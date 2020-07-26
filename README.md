@@ -22,7 +22,11 @@ b-spring5-reactive
     @Test
     void testIndex() {
         final Flux<Tuple2<Long, String>> index = getJust().index();
-        index.subscribe(consumer -> log.info("T1 = [{}], T2 = [{}]",consumer.getT1(), consumer.getT2()));
+        index.subscribe(consumer ->
+                         log.info("T1 = [{}], T2 = [{}]", 
+                                  consumer.getT1(), 
+                                  consumer.getT2())
+                        );
     }
     ```
     
@@ -41,8 +45,14 @@ b-spring5-reactive
     ```java
     @Test
     void testTimestamp() {
-        final Flux<Tuple2<Long, String>> timestamp = Flux.just("a", "b", "c", "d", "e", "f", "g").timestamp();
-        timestamp.subscribe(consumer -> log.info("t1 = [{}], t2 = [{}] ", Instant.ofEpochMilli(consumer.getT1()), consumer.getT2()));
+        final Flux<Tuple2<Long, String>> timestamp = 
+                        Flux.just("a", "b", "c", "d", "e", "f", "g")
+                            .timestamp();
+        timestamp.subscribe(consumer -> 
+                            log.info("t1 = [{}], t2 = [{}] ", 
+                                      Instant.ofEpochMilli(consumer.getT1()), 
+                                      consumer.getT2())
+                            );
     }
     ```
 <hr/>
@@ -219,9 +229,6 @@ b-spring5-reactive
     -
         최종은 축적된 반환을 얻을 수 있으며,
         다운 스트림으로 연산 과정을 흘려보낸다.
-        
-        (아래 출력을 참고)
-
         
 - scan(A initial, BiFunction<A, ? super T, A> accumulator)
     -
