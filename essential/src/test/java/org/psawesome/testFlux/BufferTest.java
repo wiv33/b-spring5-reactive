@@ -93,7 +93,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("두 번째 인자인 skip의 사이즈 7")
+  @DisplayName("두 번째 인자인 max size 4, skip의 사이즈 7 - list의 사이즈는 4이고, 원소는 7개 단위로 스킵하여 각 배열마다 3개씩 데이터 손실이 일어난다.")
   void testSize4AndSkip7() {
     final Flux<List<Integer>> buffer = range17.buffer(4, 7);
     buffer.subscribe(subscriber);
@@ -106,18 +106,22 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("10초 지연 publisher, buffer 3초 모음 - 큰 의미 없음")
+  @DisplayName("10초 지연 publisher, buffer 3초 모음 - 버퍼 한다는 점에서 큰 의미 없음")
   void testDelay10sPublisherAndBuffer3s() throws InterruptedException {
     this.delay10sRange17
             .log()
             .buffer(Duration.of(3, ChronoUnit.SECONDS))
             .subscribe(subscriber);
 
-    Thread.sleep(11000);
+    Thread.sleep(11_000);
+    /*
+13:28:21.565 [parallel-2] INFO org.psawesome.testFlux.BufferTest - onNext : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+13:28:21.565 [parallel-2] INFO org.psawesome.testFlux.BufferTest - onComplete !!!
+     */
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 3간 모음 - 의미 있음")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 3간 모음 - 의미 있음")
   void testPublisherAndBuffer3s() throws InterruptedException {
     this.intervalFluxAndLog()
             .log()
@@ -164,7 +168,54 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2000ms 모음, shift 300ms")
+  @DisplayName("띄엄띄엄(700ms) publisher, interval 300ms, 모으는 시간 300ms, 이동 속도 450ms - 데이터 손실이 일어남")
+  void testIntervalPublisherAndBuffer2_000msShift100ms() throws InterruptedException {
+    this.intervalFluxAndLog(300)
+            .buffer(Duration.ofMillis(300), Duration.ofMillis(450))
+            .subscribe(intervalSubscriber);
+
+    Thread.sleep(13_000);
+    /*
+14:26:20.487 [Test worker] INFO reactor.Flux.Take.1 - onSubscribe(FluxTake.TakeSubscriber)
+14:26:20.489 [Test worker] INFO reactor.Flux.Take.1 - request(unbounded)
+14:26:20.792 [parallel-1] INFO reactor.Flux.Take.1 - onNext(0)
+14:26:20.799 [parallel-3] INFO org.psawesome.testFlux.BufferTest - onNext : [0]
+14:26:21.091 [parallel-1] INFO reactor.Flux.Take.1 - onNext(1)
+14:26:21.242 [parallel-4] INFO org.psawesome.testFlux.BufferTest - onNext : [1]
+14:26:21.391 [parallel-1] INFO reactor.Flux.Take.1 - onNext(2)
+14:26:21.690 [parallel-1] INFO reactor.Flux.Take.1 - onNext(3)
+14:26:21.691 [parallel-5] INFO org.psawesome.testFlux.BufferTest - onNext : [2, 3]
+14:26:21.991 [parallel-1] INFO reactor.Flux.Take.1 - onNext(4)
+14:26:22.142 [parallel-6] INFO org.psawesome.testFlux.BufferTest - onNext : [4]
+14:26:22.290 [parallel-1] INFO reactor.Flux.Take.1 - onNext(5)
+14:26:22.591 [parallel-1] INFO reactor.Flux.Take.1 - onNext(6)
+14:26:22.591 [parallel-7] INFO org.psawesome.testFlux.BufferTest - onNext : [5]
+14:26:22.891 [parallel-1] INFO reactor.Flux.Take.1 - onNext(7)
+14:26:23.041 [parallel-8] INFO org.psawesome.testFlux.BufferTest - onNext : [7]
+14:26:23.191 [parallel-1] INFO reactor.Flux.Take.1 - onNext(8)
+14:26:23.491 [parallel-1] INFO reactor.Flux.Take.1 - onNext(9)
+14:26:23.492 [parallel-1] INFO org.psawesome.testFlux.BufferTest - onNext : [8, 9]
+14:26:23.791 [parallel-1] INFO reactor.Flux.Take.1 - onNext(10)
+14:26:23.942 [parallel-2] INFO org.psawesome.testFlux.BufferTest - onNext : [10]
+14:26:24.090 [parallel-1] INFO reactor.Flux.Take.1 - onNext(11)
+14:26:24.390 [parallel-1] INFO reactor.Flux.Take.1 - onNext(12)
+14:26:24.391 [parallel-3] INFO org.psawesome.testFlux.BufferTest - onNext : [11, 12]
+14:26:24.690 [parallel-1] INFO reactor.Flux.Take.1 - onNext(13)
+14:26:24.842 [parallel-4] INFO org.psawesome.testFlux.BufferTest - onNext : [13]
+14:26:24.991 [parallel-1] INFO reactor.Flux.Take.1 - onNext(14)
+14:26:25.291 [parallel-1] INFO reactor.Flux.Take.1 - onNext(15)
+14:26:25.291 [parallel-5] INFO org.psawesome.testFlux.BufferTest - onNext : [14, 15]
+14:26:25.590 [parallel-1] INFO reactor.Flux.Take.1 - onNext(16)
+14:26:25.742 [parallel-6] INFO org.psawesome.testFlux.BufferTest - onNext : [16]
+14:26:25.890 [parallel-1] INFO reactor.Flux.Take.1 - onNext(17)
+14:26:25.892 [parallel-1] INFO reactor.Flux.Take.1 - onComplete()
+14:26:25.893 [parallel-1] INFO org.psawesome.testFlux.BufferTest - onNext : [17]
+14:26:25.893 [parallel-1] INFO org.psawesome.testFlux.BufferTest - onComplete !!!
+     */
+  }
+
+  @Test
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2000ms 모음, shift 300ms")
   void testDelayPublisherAndBuffer2000msShift300ms() throws InterruptedException {
     getBuffer700ms(2_000, 300).subscribe(intervalSubscriber);
 
@@ -238,7 +289,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2초 모음, shift 400ms")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2초 모음, shift 400ms")
   void testPublisherAndBuffer2sShift1() throws InterruptedException {
     getBuffer700ms(2_000, 400)
             .subscribe(intervalSubscriber);
@@ -303,7 +354,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2초 모음, shift 700ms - 17 ")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2초 모음, shift 700ms - 17 ")
   void testBuffer2sShift700ms() throws InterruptedException {
     getBuffer700ms(2_000, 700)
             .subscribe(intervalSubscriber);
@@ -354,7 +405,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2초 모음, shift 1200ms")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2초 모음, shift 1200ms")
   void testPublisherAndBuffer2sShift1200() throws InterruptedException {
     getBuffer700ms(2_000, 1_200)
             .subscribe(intervalSubscriber);
@@ -397,7 +448,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2초 모음, shift 1300ms - 17 ")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2초 모음, shift 1300ms - 17 ")
   void testPublisherAndBuffer2sShift1300ms() throws InterruptedException {
     getBuffer700ms(2_000, 1_300)
             .subscribe(intervalSubscriber);
@@ -439,7 +490,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2초 모음, shift 2100ms - drop 14 ")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2초 모음, shift 2100ms - drop 14 ")
   void testPublisherAndBuffer2sShift2100ms() throws InterruptedException {
     getBuffer700ms(2_000, 2_100)
             .subscribe(intervalSubscriber);
@@ -480,7 +531,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2초 모음, shift 2300ms - drop 2, 12  ")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2초 모음, shift 2300ms - drop 2, 12  ")
   void testDelay10sPublisherAndBuffer3sShift2300() throws InterruptedException {
     getBuffer700ms(2_000, 2_300)
             .subscribe(intervalSubscriber);
@@ -518,7 +569,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 2초 모음, shift 2700ms - 2, 6, 10, 14 손실")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 2초 모음, shift 2700ms - 2, 6, 10, 14 손실")
   void testDelay10sPublisherAndBuffer2sShift1() throws InterruptedException {
     getBuffer700ms(2000, 2_700)
             .subscribe(intervalSubscriber);
@@ -555,7 +606,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 7초 모음, shift 500ms")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 7초 모음, shift 500ms")
   void testDelay10sPublisherAndBuffer7sShift500ms() throws InterruptedException {
     getBuffer700ms(7000, 500)
             .subscribe(intervalSubscriber);
@@ -613,7 +664,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 350ms 모음, shift 700ms - 손실 없음")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 350ms 모음, shift 700ms - 손실 없음")
   void testPublisherAndBuffer7sShift500ms() throws InterruptedException {
     getBuffer700ms(350, 700)
             .subscribe(intervalSubscriber);
@@ -664,7 +715,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 350ms 모음, shift 1400ms - 손실 50%")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 350ms 모음, shift 1400ms - 손실 50%")
   void testPublisherAndBuffer350msShift1_400ms() throws InterruptedException {
     getBuffer700ms(350, 1_400)
             .subscribe(intervalSubscriber);
@@ -706,7 +757,7 @@ public class BufferTest {
   }
 
   @Test
-  @DisplayName("띄엄띄엄 publisher, buffer 700ms 모음, shift 1400ms - 손실 발생")
+  @DisplayName("띄엄띄엄(700ms) publisher, buffer 700ms 모음, shift 1400ms - 손실 발생")
   void testPublisherAndBuffer700msShift1_400ms() throws InterruptedException {
     getBuffer700ms(700, 1_400)
             .subscribe(intervalSubscriber);
@@ -748,7 +799,7 @@ public class BufferTest {
   }
 
 
-    private Flux<Integer> rangeFlux() {
+  private Flux<Integer> rangeFlux() {
     return Flux.range(1, 17);
   }
 
@@ -758,12 +809,19 @@ public class BufferTest {
             .log();
   }
 
+  private Flux<Long> intervalFluxAndLog(int millis) {
+    return Flux.interval(Duration.ofMillis(millis))
+            .take(17 + 1)
+            .log();
+  }
+
   private Flux<Integer> delay10sRange17() {
     return this.rangeFlux().delaySubscription(Duration.ofSeconds(10));
   }
 
   private Flux<List<Long>> getBuffer700ms(int timespan, int timeShift) {
-    return intervalFluxAndLog().buffer(Duration.of(timespan, ChronoUnit.MILLIS), Duration.ofMillis(timeShift));
+    return intervalFluxAndLog()
+            .buffer(Duration.of(timespan, ChronoUnit.MILLIS), Duration.ofMillis(timeShift));
   }
 
   private <T> BufferSubscriber<T> getSubscriber() {

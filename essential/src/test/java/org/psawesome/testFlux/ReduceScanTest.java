@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
@@ -26,18 +28,20 @@ public class ReduceScanTest {
   @Test
   @DisplayName("Reduce와 Scan의 차이점")
   void testFluxReduceAndScan() {
-    Flux.range(1, 5)
-            .reduce(0, Integer::sum)
-            .subscribe(res -> log.info("result : {}", res));
+    final Mono<Integer> reduce = Flux.range(1, 5)
+            .reduce(0, Integer::sum);
+
+    reduce.subscribe(res -> log.info("result : {}", res));
 /*
 05:07:06.846 [Test worker] INFO org.psawesome.MainTest - result : 15
  */
 
     log.info(" ===================== split ===================== ");
 
-    Flux.range(1, 5)
-            .scan(0, Integer::sum)
-            .subscribe(res -> log.info("result : {}", res));
+    final Flux<Integer> scan = Flux.range(1, 5)
+            .scan(0, Integer::sum);
+
+    scan.subscribe(res -> log.info("result : {}", res));
     /*
 05:07:06.850 [Test worker] INFO org.psawesome.MainTest - result : 0
 05:07:06.851 [Test worker] INFO org.psawesome.MainTest - result : 1
@@ -75,4 +79,54 @@ public class ReduceScanTest {
                     subscription -> subscription.request(Long.MAX_VALUE));
   }
 
+  @Test
+  void testReduceAccStringBuilder() {
+    Flux.range(1, 7)
+            .map(n -> String.format("my number is %d\n", n))
+            .reduce(new StringBuilder(), StringBuilder::append)
+            .subscribe(consumer -> log.info(consumer.toString()));
+    /*
+15:01:24.998 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - my number is 1
+my number is 2
+my number is 3
+my number is 4
+my number is 5
+my number is 6
+my number is 7
+     */
+  }
+
+  @Test
+  void testReduceLinkedHashMap() {
+    Flux.range(1, 7)
+            .reduce(new LinkedHashMap<>(), (accLinked, element) -> {
+              accLinked.put(String.format("key is %d", element), String.format("my value is %d", element));
+              return accLinked;
+            })
+            .subscribe(consumer -> consumer.entrySet().forEach(System.out::println));
+    /*
+key is 1=my value is 1
+key is 2=my value is 2
+key is 3=my value is 3
+key is 4=my value is 4
+key is 5=my value is 5
+key is 6=my value is 6
+key is 7=my value is 7
+
+     */
+  }
+
+  @Test
+  void testReduceIntegerSum() {
+    Flux.range(1, 3)
+            .reduce(3, Integer::sum)
+            .subscribe(System.out::println);
+  }
+
+  @Test
+  void testScanAccStringBuilder() {
+    Flux.range(1, 7)
+            .scan(new StringBuffer(), StringBuffer::append)
+            .subscribe(consumer -> log.info(consumer.toString()));
+  }
 }
