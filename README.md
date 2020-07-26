@@ -26,7 +26,6 @@ b-spring5-reactive
     }
     ```
     
-    
 --- 
 
 ## `timestamp` : 원소 열거
@@ -43,22 +42,73 @@ b-spring5-reactive
     @Test
     void testTimestamp() {
         final Flux<Tuple2<Long, String>> timestamp = Flux.just("a", "b", "c", "d", "e", "f", "g").timestamp();
-  
-        timestamp
-          .subscribe(consumer -> log.info("t1 = [{}], t2 = [{}] ", Instant.ofEpochMilli(consumer.getT1()), consumer.getT2()));
+        timestamp.subscribe(consumer -> log.info("t1 = [{}], t2 = [{}] ", Instant.ofEpochMilli(consumer.getT1()), consumer.getT2()));
     }
     ```
 <hr/>
 
 ## `concat` : 스트림 조합
 
+[Details Test code in this repository](essential/src/test/java/org/psawesome/testFlux/IndexAndTimestampTest.java)
+    
+    n개의 스트림을 연결    
+    
+- concat(Publisher<? extends T>... sources)
+    -
+
+    ```java
+    @Test
+    void testConcat() {
+        Flux.concat(
+                Flux.range(1, 3),
+                Flux.range(4, 2),
+                Flux.range(6, 5),
+                Flux.just("a", "b", "c", "d", "e")
+        ).subscribe(System.out::println);
+    }
+    ```
+
 ---
 
 ## `merge` : 스트림 조합
 
+[Buffer Duration - Reactor document](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#merge-int-org.reactivestreams.Publisher...-)
+
+    여러 개의 다운 스트림을
+    하나의 스트림으로 병합
+    Flux<I> 반환
+    
+- merge(int prefetch, Publisher<? extends I>... sources)
+    -
+    
+        구독중인 상위 스트림 소스는 
+        parallel하다.
+
 ---
 
 ## `zip` : 스트림 조합
+
+    스트림 조합으로
+    worker thread 블록을 의미하는 zip
+    구독하는 업스트림이 데이터를 모두 내려줄 때까지 대기
+    
+    
+- zip(Publisher<? extends T1> source1, Publisher<? extends T2> source2)
+    -
+    
+        소스에서 정적인 메서드는 T6개의 source를 arg로 받는다.
+        아래 예제는 두 개의 소스를 받아 zip
+    
+    ```java
+    @Test
+    void testZip() throws InterruptedException {
+        final Flux<Integer> range = Flux.range(1, 7);
+        final Flux<Long> interval = Flux.interval(Duration.ofMillis(700));
+    
+        final Flux<Tuple2<Integer, Long>> zip = Flux.zip(range, interval);
+        zip.subscribe(System.out::println);
+    }
+    ```
 
 <hr/>
 
