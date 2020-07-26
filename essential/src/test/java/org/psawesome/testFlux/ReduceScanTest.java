@@ -128,5 +128,16 @@ key is 7=my value is 7
     Flux.range(1, 7)
             .scan(new StringBuffer(), StringBuffer::append)
             .subscribe(consumer -> log.info(consumer.toString()));
+    /*
+subscribe 출력 형태가 계단으로 출력
+15:18:44.629 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest -
+15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 1
+15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 12
+15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 123
+15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 1234
+15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 12345
+15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 123456
+15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 1234567
+     */
   }
 }

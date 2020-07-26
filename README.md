@@ -209,6 +209,8 @@ b-spring5-reactive
         
 ## `scan` : 원소 줄이기
 
+[Details Test code in this repository](essential/src/test/java/org/psawesome/testFlux/ReduceScanTest.java)
+
     accmulate 축적 연산
     Flux<T> 반환
     
@@ -235,14 +237,4 @@ b-spring5-reactive
         }
     ```        
         
-        subscribe 출력 형태가 계단으로 출력
-        15:18:44.629 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 
-        15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 1
-        15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 12
-        15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 123
-        15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 1234
-        15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 12345
-        15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 123456
-        15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 1234567
-
 <hr/>
