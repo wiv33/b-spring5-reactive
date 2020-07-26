@@ -8,6 +8,48 @@ b-spring5-reactive
 
 <hr/>
 
+## `index` : 원소 열거
+
+[Details Test code in this repository](essential/src/test/java/org/psawesome/testFlux/IndexAndTimestampTest.java)
+
+    index 연산 추가 시
+    Flux<Tuple2<Long, T>>로 다운스트림 된다.
+    
+- index()
+    -
+    
+    ```java
+    @Test
+    void testIndex() {
+        final Flux<Tuple2<Long, String>> index = getJust().index();
+        index.subscribe(consumer -> log.info("T1 = [{}], T2 = [{}]",consumer.getT1(), consumer.getT2()));
+    }
+    ```
+    
+    
+--- 
+
+## `timestamp` : 원소 열거
+
+[Details Test code in this repository](essential/src/test/java/org/psawesome/testFlux/IndexAndTimestampTest.java)
+
+    timestamp 연산 추가 시 
+    Flux<Tuple2<Long, T>>로 다운 스트림 된다.
+    
+- timestamp()
+    -
+      
+    ```java
+    @Test
+    void testTimestamp() {
+        final Flux<Tuple2<Long, String>> timestamp = Flux.just("a", "b", "c", "d", "e", "f", "g").timestamp();
+  
+        timestamp
+          .subscribe(consumer -> log.info("t1 = [{}], t2 = [{}] ", Instant.ofEpochMilli(consumer.getT1()), consumer.getT2()));
+    }
+    ```
+<hr/>
+
 ## `concat` : 스트림 조합
 
 ---
