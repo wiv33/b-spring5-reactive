@@ -6,7 +6,29 @@ b-spring5-reactive
 
 # Flux
 
-## `buffer`
+<hr/>
+
+## `concat` : 스트림 조합
+
+---
+
+## `merge` : 스트림 조합
+
+---
+
+## `zip` : 스트림 조합
+
+<hr/>
+
+## `window` : 원소 일괄처리
+   
+---   
+    
+## `group` : 원소 일괄처리
+
+---
+
+## `buffer` : 원소 일괄처리
 
 [Buffer Duration - Reactor document](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#buffer-java.time.Duration-)
 
@@ -55,9 +77,10 @@ b-spring5-reactive
         ** not interval **
         timespan == timeshfit : 중복, 손실이 없음
 
----
 
-## `reduce`
+<hr/>
+
+## `reduce` : 원소 줄이기
 
 [Details Test code in this repository](essential/src/test/java/org/psawesome/testFlux/ReduceScanTest.java)
 
@@ -89,8 +112,10 @@ b-spring5-reactive
         (3 + 1 = 4) + 2
         (4 + 2 = 6) + 3
         result : Mono<Integer>이고, subscribe 출력은 9
+
+---
         
-## `scan`
+## `scan` : 원소 줄이기
 
     accmulate 축적 연산
     Flux<T> 반환
@@ -128,3 +153,4 @@ b-spring5-reactive
         15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 123456
         15:18:44.630 [Test worker] INFO org.psawesome.testFlux.ReduceScanTest - 1234567
 
+<hr/>
