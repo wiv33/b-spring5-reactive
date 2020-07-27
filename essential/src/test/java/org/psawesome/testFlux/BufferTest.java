@@ -13,6 +13,7 @@ import reactor.test.StepVerifier;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
@@ -124,7 +125,7 @@ public class BufferTest {
   void testDelay700msPublisherBuffer3s() throws InterruptedException {
     delayArgRange17(300)
             .log()
-            .buffer(Duration.ofMillis(1_000), Duration.ofMillis(2_000))
+            .buffer(Duration.ofMillis(ThreadLocalRandom.current().nextInt(2_000)))
             .subscribe(subscriber);
 
     log.info("whoami {}", Thread.currentThread().getName());
