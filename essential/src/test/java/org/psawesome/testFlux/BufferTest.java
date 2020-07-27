@@ -13,7 +13,6 @@ import reactor.test.StepVerifier;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
@@ -30,14 +29,14 @@ public class BufferTest {
   public static final Logger log = LoggerFactory.getLogger(BufferTest.class);
 
   Flux<Integer> range17;
-  Flux<Integer> delay10sRange17;
+  Flux<Integer> delayRange17;
   Subscriber<List<Integer>> subscriber;
   Subscriber<List<Long>> intervalSubscriber;
 
   @BeforeEach
   void setUp() {
     range17 = rangeFlux();
-    delay10sRange17 = delay10sRange17();
+    delayRange17 = delayElements1sRange17();
     subscriber = getSubscriber();
     intervalSubscriber = getSubscriber();
   }
@@ -108,7 +107,7 @@ public class BufferTest {
   @Test
   @DisplayName("10초 지연 publisher, buffer 3초 모음 - 버퍼 한다는 점에서 큰 의미 없음")
   void testDelay10sPublisherAndBuffer3s() throws InterruptedException {
-    this.delay10sRange17
+    this.delayRange17
             .log()
             .buffer(Duration.of(3, ChronoUnit.SECONDS))
             .subscribe(subscriber);
@@ -118,6 +117,20 @@ public class BufferTest {
 13:28:21.565 [parallel-2] INFO org.psawesome.testFlux.BufferTest - onNext : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
 13:28:21.565 [parallel-2] INFO org.psawesome.testFlux.BufferTest - onComplete !!!
      */
+  }
+
+  @Test
+  @DisplayName("700ms마다 지연하는 publisher, buffer 3s")
+  void testDelay700msPublisherBuffer3s() throws InterruptedException {
+    delayArgRange17(300)
+            .log()
+            .buffer(Duration.ofMillis(1_000), Duration.ofMillis(2_000))
+            .subscribe(subscriber);
+
+    log.info("whoami {}", Thread.currentThread().getName());
+    Thread.sleep(15_000);
+    log.info("whoami {}", Thread.currentThread().getName());
+
   }
 
   @Test
@@ -815,8 +828,12 @@ public class BufferTest {
             .log();
   }
 
-  private Flux<Integer> delay10sRange17() {
-    return this.rangeFlux().delaySubscription(Duration.ofSeconds(10));
+  private Flux<Integer> delayElements1sRange17() {
+    return this.rangeFlux().delayElements(Duration.ofSeconds(1));
+  }
+
+  private Flux<Integer> delayArgRange17(int millis) {
+    return this.rangeFlux().delayElements(Duration.ofMillis(millis));
   }
 
   private Flux<List<Long>> getBuffer700ms(int timespan, int timeShift) {
