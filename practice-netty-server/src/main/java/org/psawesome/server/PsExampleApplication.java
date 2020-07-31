@@ -1,5 +1,7 @@
 package org.psawesome.server;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
@@ -50,11 +52,13 @@ public class PsExampleApplication {
 
   public static class PasswordDTO {
     private String raw;
-    private String encoded;
+    private String secured;
 
-    public PasswordDTO(String raw, String encoded) {
+    @JsonCreator
+    public PasswordDTO(@JsonProperty("raw") String raw,
+                       @JsonProperty("secured") String secured) {
       this.raw = raw;
-      this.encoded = encoded;
+      this.secured = secured;
     }
 
     public String getRaw() {
@@ -67,11 +71,11 @@ public class PsExampleApplication {
     }
 
     public String getEncoded() {
-      return encoded;
+      return secured;
     }
 
-    public PasswordDTO setEncoded(String encoded) {
-      this.encoded = encoded;
+    public PasswordDTO setEncoded(String secured) {
+      this.secured = secured;
       return this;
     }
   }

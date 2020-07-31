@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.Duration;
 
 /**
  * package: org.psawesome.client
@@ -17,9 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class PasswordVerificationServiceTest {
 
   @BeforeEach
-  void setUp() throws InterruptedException {
+  void setUp() {
     new Thread(PsExampleApplication::main).start();
-    Thread.sleep(1000);
   }
 
   @Test
@@ -27,6 +26,9 @@ class PasswordVerificationServiceTest {
     final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(18);
     final DefaultPasswordVerificationService service = new DefaultPasswordVerificationService(WebClient.builder());
 
-    StepVerifier.create(service.check("", ""));
+    StepVerifier.create(service.check("psawesome", encoder.encode("psawesome")))
+            .expectSubscription()
+            .expectComplete()
+            .verify(Duration.ofMillis(3333));
   }
 }
