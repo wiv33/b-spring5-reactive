@@ -8,5 +8,5 @@ dependencies {
     }
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
-//    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.projectreactor:reactor-test")
 }

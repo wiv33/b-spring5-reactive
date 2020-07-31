@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.psawesome.server.PsExampleApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
