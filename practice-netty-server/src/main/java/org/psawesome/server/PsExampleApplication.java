@@ -48,9 +48,14 @@ public class PsExampleApplication {
             ));
   }
 
-  private static class PasswordDTO {
+  public static class PasswordDTO {
     private String raw;
     private String encoded;
+
+    public PasswordDTO(String raw, String encoded) {
+      this.raw = raw;
+      this.encoded = encoded;
+    }
 
     public String getRaw() {
       return raw;
