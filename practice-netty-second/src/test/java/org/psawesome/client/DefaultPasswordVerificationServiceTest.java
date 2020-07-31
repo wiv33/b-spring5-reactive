@@ -40,6 +40,6 @@ class DefaultPasswordVerificationServiceTest {
             .thenAwait(Duration.ofSeconds(10))
             .expectComplete()
             .verifyThenAssertThat()
-            .hasDroppedErrors(10);
+            .tookLessThan(Duration.ofSeconds(20));
   }
 }
