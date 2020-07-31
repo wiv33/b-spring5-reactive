@@ -22,8 +22,9 @@ class PasswordVerificationServiceTest {
 
   @BeforeEach
   void setUp() throws InterruptedException {
-    new Thread(StandaloneApplication::main).start();
-    Thread.sleep(1000);
+    final Thread thread = new Thread(StandaloneApplication::main);
+    thread.start();
+    Thread.sleep(10000);
   }
 
   @Test
@@ -36,6 +37,6 @@ class PasswordVerificationServiceTest {
     StepVerifier.create(service.check("psawesome", passwordEncoder.encode("psawesome")))
             .expectSubscription()
             .expectComplete()
-            .verify(Duration.ofMillis(3333));
+            .verify();
   }
 }

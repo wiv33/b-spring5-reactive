@@ -1,6 +1,5 @@
 package org.psawesome.server;
 
-import org.psawesome.common.PasswordDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
@@ -15,44 +14,60 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 /**
- * package: org.psawesome
+ * package: org.psawesome.server
  * author: PS
- * DATE: 2020-07-31 금요일 11:32
+ * DATE: 2020-07-31 금요일 12:56
  */
-public class StandaloneApplication {
+public class PsExampleApplication {
+
   public static void main(String... args) {
     final HttpHandler httpHandler = RouterFunctions.toHttpHandler(
             routes(new BCryptPasswordEncoder(18))
     );
 
-    ReactorHttpHandlerAdapter reactorHttpHandlerAdapter =
-            new ReactorHttpHandlerAdapter(httpHandler);
+    final ReactorHttpHandlerAdapter handlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
 
-//    HttpServer.create("", 8080)
     HttpServer.create(8080)
-            .newHandler(reactorHttpHandlerAdapter)
+            .newHandler(handlerAdapter)
             .flatMap(NettyContext::onClose)
-            .block()
-    ;
+            .block();
 
   }
 
-
-  private static RouterFunction<ServerResponse> routes(
-          BCryptPasswordEncoder passwordEncoder
-  ) {
+  private static RouterFunction<ServerResponse> routes(BCryptPasswordEncoder passwordEncoder) {
     return route(POST("/check"), request -> request
             .bodyToMono(PasswordDTO.class)
-            .map(p -> passwordEncoder
-                    .matches(p.getRaw(), p.getSecured()))
-            .flatMap(isMatched -> isMatched
+            .map(dto -> passwordEncoder.matches(dto.getRaw(), dto.getEncoded()))
+            .flatMap(isMatcher -> isMatcher
                     ? ServerResponse
                     .ok()
                     .build()
                     : ServerResponse
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .build())
-    );
+                    .build()
+            ));
   }
 
+  private static class PasswordDTO {
+    private String raw;
+    private String encoded;
+
+    public String getRaw() {
+      return raw;
+    }
+
+    public PasswordDTO setRaw(String raw) {
+      this.raw = raw;
+      return this;
+    }
+
+    public String getEncoded() {
+      return encoded;
+    }
+
+    public PasswordDTO setEncoded(String encoded) {
+      this.encoded = encoded;
+      return this;
+    }
+  }
 }
