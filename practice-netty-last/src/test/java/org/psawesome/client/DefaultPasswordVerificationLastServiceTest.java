@@ -1,6 +1,8 @@
 package org.psawesome.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.psawesome.server.LastDemoApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
