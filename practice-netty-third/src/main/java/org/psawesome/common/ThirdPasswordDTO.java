@@ -16,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ThirdPasswordDTO {
 
-  private String raw;
-  private String secured;
+  private final String raw;
+  private final String secured;
 
   @JsonCreator
   public ThirdPasswordDTO(@JsonProperty("raw") String raw,
