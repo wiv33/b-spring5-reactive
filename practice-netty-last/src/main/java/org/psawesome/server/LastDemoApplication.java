@@ -29,10 +29,8 @@ public class LastDemoApplication {
     final HttpHandler httpHandler = RouterFunctions.toHttpHandler(
             RouterFunctions.route(POST("/check"), request -> request
                     .bodyToMono(LastPasswordDTO.class)
-                    .map(dto -> {
-                      final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(18);
-                      return encoder.matches(dto.getRaw(), dto.getEncode());
-                    })
+                    .map(dto -> new BCryptPasswordEncoder(18)
+                            .matches(dto.getRaw(), dto.getTest()))
                     .flatMap(isMatch -> isMatch
                             ? ServerResponse
                             .ok()

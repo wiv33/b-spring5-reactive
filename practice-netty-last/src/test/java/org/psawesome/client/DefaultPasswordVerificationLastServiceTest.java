@@ -22,6 +22,11 @@ import java.time.Duration;
  */
 public class DefaultPasswordVerificationLastServiceTest {
 
+  @BeforeEach
+  void setUp() {
+    new Thread(LastDemoApplication::main).start();
+  }
+
   @Test
   void testVerificationPassword() {
     final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(18);

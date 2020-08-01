@@ -30,7 +30,9 @@ public class DefaultPasswordVerificationLastService implements PasswordVerificat
   public Mono<Void> check(String raw, String encode) {
     return this.client
             .post()
+            .uri("/check")
             .body(BodyInserters.fromPublisher(
+//                    DB 조회한 값을 서버에 보내서 확인하는 곳
                     Mono.just(new LastPasswordDTO(raw, encode)),
                     LastPasswordDTO.class
             ))

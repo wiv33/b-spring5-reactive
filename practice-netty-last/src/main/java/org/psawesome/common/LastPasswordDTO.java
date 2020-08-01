@@ -1,5 +1,8 @@
 package org.psawesome.common;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
  * @role
@@ -13,18 +16,20 @@ package org.psawesome.common;
  */
 public class LastPasswordDTO {
   private final String raw;
-  private final String encode;
+  private final String test;
 
-  public LastPasswordDTO(String raw, String encode) {
+  @JsonCreator
+  public LastPasswordDTO(@JsonProperty("raw") String raw,
+                         @JsonProperty("test") String test) {
     this.raw = raw;
-    this.encode = encode;
+    this.test = test;
   }
 
   public String getRaw() {
     return raw;
   }
 
-  public String getEncode() {
-    return encode;
+  public String getTest() {
+    return test;
   }
 }
