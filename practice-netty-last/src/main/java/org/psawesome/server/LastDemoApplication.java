@@ -1,5 +1,8 @@
 package org.psawesome.server;
 
+import reactor.ipc.netty.NettyContext;
+import reactor.ipc.netty.http.server.HttpServer;
+
 /**
  * @author ps [https://github.com/wiv33/b-spring5-reactive]
  * @role
@@ -14,5 +17,11 @@ package org.psawesome.server;
 public class LastDemoApplication {
   public static void main(String... args) {
 
+/*
+    HttpServer.create(8080)
+            .newHandler(handlerAdapter)
+            .flatMap(NettyContext::onClose)
+            .block();
+*/
   }
 }

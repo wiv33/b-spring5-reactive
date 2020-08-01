@@ -19,10 +19,12 @@ import java.time.Duration;
  * @since 20. 8. 1. Saturday
  */
 public class DefaultPasswordVerificationLastServiceTest {
+
   @Test
   void testVerificationPassword() {
     final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(18);
-    final DefaultPasswordVerificationLastService service = new DefaultPasswordVerificationLastService(WebClient.builder());
+    final DefaultPasswordVerificationLastService service =
+            new DefaultPasswordVerificationLastService(WebClient.builder());
 
 //    check에 이 비밀번호가 맞는지 물어보고
     StepVerifier.create(service.check("ps", encoder.encode("ps")))
