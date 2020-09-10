@@ -5,7 +5,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("io.r2dbc:r2dbc-postgresql")
-    runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
