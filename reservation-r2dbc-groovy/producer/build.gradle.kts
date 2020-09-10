@@ -1,8 +1,8 @@
 extra["springCloudVersion"] = "Hoxton.SR8"
 dependencies {
-
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    extra["upVersion"] = "2.3.3.RELEASE"
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("io.r2dbc:r2dbc-postgresql")
     runtimeOnly("org.postgresql:postgresql")
@@ -13,6 +13,7 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
 }
+
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")

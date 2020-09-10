@@ -1,7 +1,7 @@
 plugins {
     java
-    id("org.springframework.boot") version "2.0.2.RELEASE"
-    id("io.spring.dependency-management") version "1.0.9.RELEASE"
+    id("org.springframework.boot") version "2.3.3.RELEASE"
+    id("io.spring.dependency-management") version "1.0.10.RELEASE"
 }
 allprojects {
     apply(plugin = "java")
@@ -14,7 +14,7 @@ subprojects {
     version = "1.0.0-SNAPSHOT"
     java.sourceCompatibility = JavaVersion.VERSION_13
 
-    extra["springCloudVersion"] = "Hoxton.SR5"
+    extra["springCloudVersion"] = "Hoxton.SR8"
 
     configurations {
         compileOnly {
@@ -39,10 +39,7 @@ subprojects {
             mavenBom("org.springframework.cloud:spring-cloud-dependencies:${extra["springCloudVersion"]}")
         }
     }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
+    tasks.withType(Test::useJUnitPlatform)
 }
 
 project(":temperature") {
