@@ -46,7 +46,7 @@ public class ReservationHttpTest {
 
     this.testClient
             .get()
-            .uri("/reservation")
+            .uri("/reservations")
             .exchange()
             .expectStatus().isOk()
             .expectBody()
