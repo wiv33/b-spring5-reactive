@@ -17,22 +17,13 @@ import org.springframework.test.web.reactive.server.WebTestClient;
  */
 public class NettyApplicationTest {
 
-  WebTestClient testClient;
-
   @BeforeEach
   void setUp() throws InterruptedException {
-    new Thread(NettyApplication::main)
-            .start();
-    Thread.sleep(10000);
-
-    this.testClient = WebTestClient
-            .bindToServer()
-            .baseUrl("http://localhost:8080")
-            .build();
+    new Thread(NettyApplication::main).start();
   }
 
   @Test
-  void testNettyApplicationRun() throws InterruptedException {
-
+  void testNettyApplicationRun(){
+    System.out.println("NettyApplicationTest.testNettyApplicationRun");
   }
 }
