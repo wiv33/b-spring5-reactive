@@ -25,6 +25,10 @@ public class NettyApplicationTest {
             .start();
     Thread.sleep(10000);
 
+    this.testClient = WebTestClient
+            .bindToServer()
+            .baseUrl("http://localhost:8080")
+            .build();
   }
 
   @Test

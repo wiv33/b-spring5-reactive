@@ -1,7 +1,7 @@
 plugins {
     java
-    id("org.springframework.boot") version "2.3.3.RELEASE"
-    id("io.spring.dependency-management") version "1.0.10.RELEASE"
+    id("org.springframework.boot") version "2.0.2.RELEASE"
+    id("io.spring.dependency-management") version "1.0.9.RELEASE"
 
 }
 allprojects {
